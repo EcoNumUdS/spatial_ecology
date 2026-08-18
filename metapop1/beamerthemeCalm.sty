@@ -1,0 +1,85 @@
+\mode<presentation>
+
+%% General setup
+
+%% Fonts & typography
+
+\usepackage[T1]{fontenc}
+%\usepackage[slides,frenchmath,lf,loosequotes]{MinionPro}
+%\usefonttheme{serif}
+\usepackage[default]{lato}
+\usepackage{eulervm}
+\usepackage[scaled=1.05]{inconsolata}
+\linespread{1.2}
+
+%% Absolute text placement
+\usepackage{textcomp}
+\usepackage[absolute,overlay]{textpos}
+
+\newcommand\paper[1]{%
+  \begin{textblock*}{\paperwidth}(2pt,0.99\textheight)
+     \raggedleft{\tiny {#1}}\hspace{.5em}
+  \end{textblock*}}
+
+% Frame title
+\setbeamerfont{frametitle}{shape=\scshape,size=\normalsize}
+\usepackage{pgfplots}
+
+% Title page elements
+\setbeamerfont{title}{shape=\bfseries,size=\large}
+\setbeamerfont{subtitle}{shape=\normalfont,size=\small}
+\setbeamerfont{institute}{shape=\scshape, size=\tiny}
+\setbeamerfont{author}{series=\bfseries,size=\small,shape=\normalfont}
+
+%% Layouts
+\beamertemplatenavigationsymbolsempty
+
+\setbeamertemplate{footline}{
+   \ifnum\c@framenumber>1%
+   \begin{textblock*}{2pt}(2pt,0.99\textheight)\raggedleft{\tiny {\insertframenumber}}\hspace{.5em}\end{textblock*}%
+   \else%
+   \fi%
+   }
+
+% Enumeration and itemizes are out the left margin
+\setbeamertemplate{itemize/enumerate body begin}{\setlength{\leftmargini}{10pt}}
+\setbeamertemplate{itemize item}[round]
+
+% Frame title
+\setbeamertemplate{frametitle}{%
+   \vskip 0.4em%
+   \line(1,0){130}%
+   \vskip 0.1em%
+   \insertframetitle\hskip 1em \usebeamercolor[fg]{framesubtitle}\insertframesubtitle%
+}
+
+\pgfdeclareimage[width=\paperwidth,height=\paperheight]{back}{back}
+%\pgfdeclareimage[height=1.8cm]{logo}{logo}
+
+\setbeamertemplate{background canvas}{%
+    \ifnum\c@framenumber=0%
+        \pgfuseimage{back}
+    \else%
+        \pgfuseimage{bg}
+    \fi%
+}
+
+% Title frame
+\setbeamertemplate{title page}{%
+      \setbeamertemplate{footline}{ }
+      \addtocounter{framenumber}{-1}
+      \vskip 0.4em%
+      \usebeamerfont{institute}\usebeamercolor[fg]{institute}\insertinstitute\hskip 1em%
+      \usebeamerfont{date}\usebeamercolor[fg]{date}\insertdate%
+      \vfill%
+      \vfill%
+      \usebeamerfont{title}\usebeamercolor[fg]{title}\inserttitle%
+      \vskip 0.6em
+      \usebeamerfont{subtitle}\usebeamercolor[fg]{subtitle}\insertsubtitle%
+      \vfill%
+      \vfill%
+      \usebeamerfont{author}\usebeamercolor[fg]{author}\insertauthor
+      \vfill%
+      \vfill%
+%      \pgfuseimage{logo}
+}
