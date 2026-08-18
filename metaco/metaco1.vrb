@@ -1,0 +1,9 @@
+\frametitle{Species sorting}\framesubtitle {Additions to code}
+
+    \begin{verbatim}
+        # Local replacement
+            n_propagules = ContMat%*%J
+            survival = survival_fn(E,O,sigma)
+            p_local = survival * n_propagules/(r^2-1)
+    \end{verbatim}
+
