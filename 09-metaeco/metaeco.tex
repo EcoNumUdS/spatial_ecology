@@ -43,8 +43,8 @@
 %------------------------------
 
 \author{Dominique Gravel}
-\title{A spatial perspective on the stability-complexity relationship}
-\date{August 27th, 2026}
+\title{Spatial cascades in metaecosystems}
+\date{August 28th, 2026}
 \institute{Université de Sherbrooke \\ Summer school in biodiversity modelling}
 
 %------------------------------
@@ -66,447 +66,470 @@
 % INTRO
 %------------------------------
 
-\begin{frame}{An old and intuitive interpretation}
-	    
-	For decades, a dominant paradigm was that complex communities are more stable (Odum 1953; MacArthur 1955; Elton 1958; Hutchinson 1959).\\
-
-	\vskip 3em
-
-	MacArthur (1955) stated very generally that \alert{"a larger number of paths through each species is necessary to reduce the effects of overpopulation of one species"}. He later concluded that\alert{"stability increases as the number of links increases"}.
+\begin{frame}{Island secondary productivity}
 	
-	\end{frame}
-
-%------------------------------
-
-	\begin{frame}{But....}
-		\begin{columns}
-			\begin{column}{0.5\textwidth}
-				\begin{center}
-					\includegraphics[height=0.65\textheight]{Figs/May_book}
-				\end{center}
-			\end{column}
-%----
-			\begin{column}{0.5\textwidth}
-				\begin{center}
-					\includegraphics[height=0.45\textheight]{Figs/May_picture}
-				\end{center}
-			\end{column}
-		\end{columns}	    	
-	\end{frame}
-
-%------------------------------
-
-	\begin{frame}{Stability of random ecosystems}
-		\begin{columns}
-			\begin{column}{0.5\textwidth}
-				\begin{center}
-					\includegraphics[height=0.65\textheight]{Figs/May_book}
-				\end{center}
-			\end{column}
-%----
-			\begin{column}{0.5\textwidth}
-				\[ J = 
-				\begin{bmatrix}
-                    - & + & 0 & 0 & - \\
-                    0 & - & 0 & 0 & 0 \\
-					0 & - & - & 0 & 0 \\
-					- & 0 & 0 & - & - \\
-					0 & 0 & + & 0 & -
-				\end{bmatrix} \] 
-			\end{column}
-		\end{columns}	    	
-	\end{frame}
-
-%------------------------------
-
-	\begin{frame}{Stability of random ecosystems}
-		\begin{columns}
-			\begin{column}{0.5\textwidth}
-
-				Criteria for local stability of complex random ecosystems:
-
-				\keyeqs{\alpha\sqrt{SC}<1}
-
-				Where: 
-				\begin{itemize}
-					\item $\alpha$: standard deviation of non null elements of the Jacobian
-					\item $S$: species richness
-					\item $C$: Connectance
-				\end{itemize}
-			\end{column}
-%----
-			\begin{column}{0.5\textwidth}
-				\[ J = 
-				\begin{bmatrix}
-                    - & + & 0 & 0 & - \\
-                    0 & - & 0 & 0 & 0 \\
-					0 & - & - & 0 & 0 \\
-					- & 0 & 0 & - & - \\
-					0 & 0 & + & 0 & -
-				\end{bmatrix} \] 
-			\end{column}
-		\end{columns}	    	
-	\end{frame}
-
-%------------------------------
-
-	\begin{frame}{The complexity paradox}
-	    
-		\begin{center}
-			\includegraphics[height=0.75\textheight]{Figs/cod_web}
-		\end{center}
-	
-	\end{frame}
-
-%------------------------------
-
-	\begin{frame}{Food webs are not random}
-	    
-		\begin{columns}
-			\begin{column}{0.5\textwidth}			
-				Pimm, S.L. (1982). Food Webs. University of Chicago Press. Chicago.
-
-				\begin{itemize}
-					\item Food webs are not random
-					\item There are multiple meanings to stability
-				\end{itemize}
-			\end{column}
-%----
-			\begin{column}{0.5\textwidth}
-				\begin{center}
-					\includegraphics[height=0.65\textheight]{Figs/pimm_book}
-				\end{center}
-			\end{column}
-		\end{columns}	    	
-	
-	\end{frame}
-
-%------------------------------
-
-\begin{frame}{Testing scaling relationships}
-	    
-	\begin{columns}
-		\begin{column}{0.5\textwidth}			
-
-			Given the relationship
-
-			\keyeqs{\alpha\sqrt{SC}=\alpha\sqrt{\frac{L}{S}}<1}
-
-			We should find a relationship between L and S, such that:
-			\keyeqs{log(L) = \frac{1}{2}log(\alpha) + log(S)}
-
-		\end{column}
-%----
-		\begin{column}{0.5\textwidth}
-			\begin{center}
-				\includegraphics[height=0.65\textheight]{Figs/link_scaling}
-			\end{center}
-		\end{column}
-	\end{columns}	    
+	\begin{center}
+		\includegraphics[height=0.8\textheight]{Figs/polis1995}\\
+		\footnotesize Polis et Hurd. 1995, 1996
+	\end{center}  
 
 \end{frame}
 
 %------------------------------
 
-\begin{frame}{And interactions are not normally distributed}
+\begin{frame}{Apparent competition in the arctic}
 	
-	\begin{columns}
-		\begin{column}{0.4\textwidth}			
-			What about the $\alpha$ parameter?\\
-
-		\end{column}
-%----
-		\begin{column}{0.6\textwidth}
-			\begin{center}
-				\includegraphics[height=0.7\textheight]{Figs/mccann}\\
-				\footnotesize McCann et al. 1998. Nature.
-			\end{center}
-		\end{column}
-	\end{columns}	    
+	\begin{center}
+		\includegraphics[height=0.7\textheight]{Figs/giroux2007}\\
+		\footnotesize Giroux et al. 2007. JAE.
+	\end{center}
 
 \end{frame}
 
 %------------------------------
 
-\begin{frame}{And interactions are not normally distributed}
+\begin{frame}{Stream-forest interface}
 	
-	\begin{columns}
-		\begin{column}{0.4\textwidth}			
-			What about the $\alpha$ parameter?\\
+	\begin{center}
+		\includegraphics[height=0.7\textheight]{Figs/heldfield2001}\\
+		\footnotesize Helfield and Naimoan. 2001.
+	\end{center}
+
+\end{frame}
+
+%------------------------------
+
+\begin{frame}{Seabirds colonies}
+	
+	\begin{center}
+		\includegraphics[height=0.7\textheight]{Figs/maron2006}\\
+		\footnotesize Maron et al. 2006. Ecol. Monogr.
+	\end{center}
+
+\end{frame}
+
+%------------------------------
+
+\begin{frame}{Carbon fluxes}{Global scale}
+	
+	\begin{center}
+		\includegraphics[height=0.7\textheight]{Figs/gounand2016}\\
+		\footnotesize Gounand et al. 2016. Nat. Communications
+	\end{center}
+
+\end{frame}
+
+%------------------------------
+
+\begin{frame}{Spatial cascades}
+	
+	\begin{center}
+		\includegraphics[height=0.7\textheight]{Figs/knight2005}\\
+		\footnotesize Knight et al. 2005. Nature.
+	\end{center}
+
+\end{frame}
+
+%------------------------------
+% EXERCISE
+%------------------------------
+
+{
+	\usebackgroundtemplate{}
+	\begin{frame}
+	
+		\pagecolor{BDQC1st}
+		\color{white}
+	
+		\LARGE{\textit{Exercise}}
+	
+	\end{frame}
+}
+		
+%------------------------------
+		
+\begin{frame}{A minimal ecosystem model}{Two patches}
+	
+	\begin{center}
+		\includegraphics[height=0.7\textheight]{Figs/gravel2010a}\\
+	\end{center}
+
+\end{frame}
+
+%------------------------------
+		
+\begin{frame}{A minimal ecosystem model}{Equations}
+	
+	\keyeqs{
+		\frac{dN_x}{dt}
+		= I_x + rD_x - e_NN_x - a_PN_xP_x
+		+ d_N\left(N_{x+1} - N_x\right)
+	}
+	
+	\keyeqs{
+		\frac{dP_x}{dt}
+		= a_PN_xP_x - m_PP_x - e_PP_x - a_HP_xH_x
+		+ d_P\left(P_{x+1} - P_x\right)
+	}
+	
+	\keyeqs{
+		\frac{dH_x}{dt}
+		= a_HP_xH_x - m_HH_x - e_HH_x
+		+ d_H\left(H_{x+1} - H_x\right)
+	}
+	
+	\keyeqs{
+		\frac{dD_x}{dt}
+		= m_PP_x + m_HH_x - (r + e_D)D_x
+		+ d_D\left(D_{x+1} - D_x\right)
+	}
+
+\end{frame}
+
+%------------------------------
+		
+\begin{frame}{Exercise}
+	
+	\begin{itemize}
+		\item Consider a chain of lakes connected by streams
+		\item Starting with plants and detritus only, look at the distribution of stocks from one location to another 		
+		\item Add herbivores, how is it changing ?
+		\item Decrease progressively the external input $I_x$, what is happening ?
+	\end{itemize}
+	
+\end{frame}
+
+%------------------------------
+
+{
+	\usebackgroundtemplate{}
+	\begin{frame}
+	
+		\pagecolor{BDQC1st}
+		\color{white}
+	
+		\LARGE{\textit{Source and sink dynamics in metaecosystems}}
+	
+	\end{frame}
+}
+		
+%------------------------------
+% SOURCE-SINK THEORY
+%------------------------------
+				
+\begin{frame}{Metaecosystems}
+	
+	\textbf{Definition} : a set of ecosystems connected by spatial flows of energy, materials and organisms across ecosystem boundaries (Loreau et al. 2003, Eco Lett.)
+	
+	\textit{Less appreciated is the fact that these flows may also impose global constraints at the scale of the meta-ecosystem as a whole, thereby generating a strong interdependence among local ecosystems. [] which means that some compartments must be sources whereas others must be sinks in each ecosystem}
+
+\end{frame}
+
+%------------------------------
+		
+\begin{frame}{Direction of spatial flows}
+	
+	\begin{center}
+		\includegraphics[height=0.7\textheight]{Figs/gravel2010b}\\
+		\footnotesize Gravel et al. 2010. Ecology
+	\end{center}
+
+\end{frame}
+
+%------------------------------
+		
+\begin{frame}{Primary productivity}
+	
+	\begin{center}
+		\includegraphics[height=0.7\textheight]{Figs/gravel2010c}\\
+		\footnotesize Gravel et al. 2010. Ecology
+	\end{center}
+
+\end{frame}
+
+%------------------------------
+		
+\begin{frame}{Food chain length}
+	
+	\begin{center}
+		\includegraphics[height=0.7\textheight]{Figs/gravel2010d}\\
+		\footnotesize Gravel et al. 2010. Ecology
+	\end{center}
+
+\end{frame}
+
+%------------------------------
+		
+\begin{frame}{Paradox of enrichment}
+	
+	\begin{center}
+		\includegraphics[height=0.7\textheight]{Figs/gounand2014}\\
+		\footnotesize Gounand et al. 2014. Am. Nat.
+	\end{center}
+
+\end{frame}
+
+%------------------------------
+					
+\begin{frame}{Source-sink dynamics}{Interpretations}
+	
+	\textbf{Demographic source/sink} : Habitat that is a net exporter/importer of individuals (Pulliam, 1988)
+
+	\textbf{Fundamental source/sink} : Habitat in which a species’ density-independent growth rate is
+	positive/negative in the absence of spatial flows (Gravel et al. 2010)
+
+	\textbf{Realized source/sink} : Habitat in which a species’ density-independent growth rate is
+	positive/negative in the presence of spatial flows (Gravel et al. 2010)
+
+	\textbf{Conditional/Unconditional source/sink} : Subsystem that produces/absorbs a surplus of specific living or
+	non-living entities under some/all conditions (Loreau et al. 2013)
+
+\end{frame}
+
+%------------------------------
+% SPATIAL CASCADES
+%------------------------------
+
+{
+	\usebackgroundtemplate{}
+	\begin{frame}
+	
+		\pagecolor{BDQC1st}
+		\color{white}
+	
+		\LARGE{\textit{Spatial cascades}}
+	
+	\end{frame}
+}
+		
+%------------------------------
+		
+\begin{frame}{Trophic cascades}
+	
+	\begin{center}
+		\includegraphics[height=0.75\textheight]{Figs/estes2011}\\
+		\footnotesize Estes et al. 2011. Science
+	\end{center}
+
+\end{frame}
+
+%------------------------------
 			
-		\end{column}
-%----
-		\begin{column}{0.6\textwidth}
-			\begin{center}
-				\includegraphics[height=0.5\textheight]{Figs/jacquet2016}\\
-				\footnotesize Jacquet et al. 2016. Nat. Communications
-			\end{center}
-		\end{column}
-	\end{columns}	    
-
-\end{frame}
-
-%------------------------------
-% DIFFUSION EXERCISE
-%------------------------------
-
-{
-\usebackgroundtemplate{}
-\begin{frame}
-
-	\pagecolor{BDQC1st}
-	\color{white}
-
-	\LARGE{\textit{But what about spatial dynamics ?}}
-
-\end{frame}
-}
-
-%------------------------------
-
-\begin{frame}{Rosenzweig-MacArthur consumer-resource model}
-
-
-	Resource dynamics follow a logistic growth, minus consumption : 
-		\keyeqs{\frac{dR}{dt} = rR*(1-\frac{R}{K}) - \frac{aRC}{1+bR}}
-
-	And consumer dynamics simply transform consumption into biomas, minus mortality :
-		\keyeqs{\frac{dC}{dt} = \frac{eaRC}{1+bR}-mC}
-
-	You can solve the equation at equilibrium by setting differential equations to 0 and isolating the two variables. 
-
-\end{frame}
-
-%------------------------------
-
-\begin{frame}{Rosenzweig-MacArthur predator-prey model}{Paradox of enrichment}
-
+\begin{frame}{Indirect interactions in food webs}
+	
 	\begin{center}
-		\includegraphics[height=0.75\textheight]{Figs/paradox}
+		\includegraphics[height=0.7\textheight]{Figs/montoya2009a}\\
+		\footnotesize Montoya et al. 2009. Ecology
+	\end{center}
+
+\end{frame}
+
+%------------------------------
+			
+\begin{frame}{Indirect interactions in food webs}
+	
+	\begin{center}
+		\includegraphics[height=0.7\textheight]{Figs/montoya2009b}\\
+		\footnotesize Montoya et al. 2009. Ecology
+	\end{center}
+
+\end{frame}
+
+%------------------------------
+			
+\begin{frame}{Indirect interactions in food webs}{Metaecosystems}
+	
+	\begin{center}
+		\includegraphics[height=0.7\textheight]{Figs/garcia2019a}\\
+		\footnotesize Garcia et al. 2019. Ecology
+	\end{center}
+
+\end{frame}
+
+%------------------------------					
+					
+\begin{frame}{Spatial cascades}{Model}
+	
+	\begin{center}
+		\includegraphics[height=0.7\textheight]{Figs/gravel2016a}\\
+		\footnotesize Gravel et al. 2016. Nat. Communications
 	\end{center}
 
 \end{frame}
 
 %------------------------------
 
-\begin{frame}{Rosenzweig-MacArthur predator-prey model}{Adding resource immigration}
-
-	Resource immigration is stabilizing because it induces indirect density-dependence : 
-
-		\keyeqs{\frac{dR}{dt} = rR*(1-\frac{R}{K}) - \frac{aRC}{1+bR} + I}
-
-	Or : 
-
-		\keyeqs{\frac{dR}{dt}\frac{1}{R} = r(1-\frac{R}{K}) - \frac{aC}{1+bR} + \frac{I}{R}}
+\begin{frame}{Spatial cascades}{Emerging indirect interactions}
+	
+	\begin{center}
+		\includegraphics[height=0.7\textheight]{Figs/garcia2019b}\\
+		\footnotesize Garcia et al. 2019. Ecology
+	\end{center}
 
 \end{frame}
 
-%------------------------------
+%------------------------------					
+			
+\begin{frame}{Spatial cascades}{Spatial structure}
+	
+	\begin{center}
+		\includegraphics[height=0.7\textheight]{Figs/garcia2019c}\\
+		\footnotesize Garcia et al. 2019. Ecology
+	\end{center}
 
-\begin{frame}{Rosenzweig-MacArthur predator-prey model}{Adding consumer immigration}
+\end{frame}
 
-	In the situation where : 
-
-		\keyeqs{\frac{dC}{dt} = \frac{eaRC}{1+bR}-mC + I} 
-
-	And we find that increasing $I$
-
+%------------------------------					
+			
+\begin{frame}{Metaecosystem dynamics}{Conclusion}
+	
 	\begin{itemize}
-		\item Drives the resource towards extinction
-		\item Generates indirect density-dependence, which is also stabilizing
+		\item Local productivity may depend on surrounding ecological context
+		\item Energy and nutrient flows may alter food web structure and dynamics
+		\item Contingent source-sink dynamics spatial ecosystems
+		\item Very conceptual, needs concrete application
 	\end{itemize}
 
 \end{frame}
 
 %------------------------------
+% MIGRATION
+%------------------------------	
 
-\begin{frame}{Rosenzweig-MacArthur predator-prey model}{Discrete landscale}
-
-	Consider a two patch system : 
-
-		\keyeqs{\frac{dR_x}{dt} = rR_x*(1-\frac{R_x}{K}) - \frac{aR_xC_x}{1+bR_x} - d_R R_x + d_R (R_{x-1}+R_{x+1})/2}
-
-	And 
-
-		\keyeqs{\frac{dC_x}{dt} = \frac{eaR_xC_x}{1+bR_x}-mC_x - d_C C_x + d_c (C_{x-1}+C_{x+1})/2} 	
+{
+	\usebackgroundtemplate{}
+	\begin{frame}
+	
+		\pagecolor{BDQC1st}
+		\color{white}
+	
+		\LARGE{\textit{Migration as a unique spatial flow}}
+	
+	\end{frame}
+}
+		
+%------------------------------
+		
+\begin{frame}{Actual theory}
+	
+	\begin{center}
+		\includegraphics[height=0.6\textheight]{Figs/gounand2018}\\
+		\footnotesize Gounand et al. 2018. TREE
+	\end{center}
 
 \end{frame}
 
-%------------------------------
+%------------------------------	
+		
+\begin{frame}{Actual theory}
+	
+	\begin{center}
+		\includegraphics[height=0.7\textheight]{Figs/gravel2016a}\\
+		\footnotesize Gravel et al. 2016. Nat. Communications
+	\end{center}
 
-\begin{frame}{Rosenzweig-MacArthur predator-prey model}{Discrete landscape}
+\end{frame}
 
+%------------------------------	
+				
+\begin{frame}{Unique features of migration}
+	
 	\begin{itemize}
-		\item Implement the model over a large one dimensional lattice, without diffusion
-		\item Extract and plot time series
-		\item Tune parameters to get close to instability
-		\item Add progressively the resource and consumer diffusion parameters
-		\item \textbf{Advanced} : add spatial variability in $K$ and compare results
+		\item Happens at very specific moment of the year
+		\item High frequency and repeated
+		\item Include all individuals
+		\item Very short 
+		\item Very species-specific
 	\end{itemize}
 
 \end{frame}
 
+%------------------------------	
+
+\begin{frame}{Migration networks}
+	\begin{center}
+		\includegraphics[height=0.4\textheight]{Figs/moisan2022a}\\
+		\footnotesize{Moisan et al. 2022 \textit{Front. Ecol. Evol.}}
+	\end{center}
+\end{frame}
+
 %------------------------------
 
-\begin{frame}{From local to regional dynamics}
-	    
+\begin{frame}{Migration networks}
 	\begin{center}
-		\includegraphics[height=0.75\textheight]{Figs/jansen2000}\\
-		\footnotesize Jansen et al. 2000
+		\includegraphics[height=0.75\textheight]{Figs/moisan2022b}\\
+		\footnotesize{Moisan et al. 2022 \textit{Front. Ecol. Evol.}}
+	\end{center}
+\end{frame}
+
+%------------------------------
+
+\begin{frame}{Migration networks}
+	\begin{center}
+		\includegraphics[height=0.75\textheight]{Figs/moisan2022c}\\
+		\footnotesize{Moisan et al. 2022 \textit{Front. Ecol. Evol.}}
+	\end{center}
+\end{frame}
+
+%------------------------------
+
+\begin{frame}{Hybrid models}
+	
+	\begin{center}
+		\includegraphics[height=0.7\textheight]{Figs/hutchison2020}\\
+		\footnotesize Hutchison et al. 2020. Phil. Trans. Roy. Soc. A
 	\end{center}
 
 \end{frame}
 
-%------------------------------
-% Stability-complexity theory
-%------------------------------
-
-{
-\usebackgroundtemplate{}
-\begin{frame}
-
-	\pagecolor{BDQC1st}
-	\color{white}
-
-	\LARGE{\textit{Stability and complexity in random metaecosystems}}
-
-\end{frame}
-}
-
-%------------------------------
-
-\begin{frame}{From local to regional dynamics}
-	    
+%------------------------------	
+				
+\begin{frame}{Hybrid models}{Stability}
+	
 	\begin{center}
-		\includegraphics[height=0.55\textheight]{Figs/spatial_networks}
+		\includegraphics[height=0.7\textheight]{Figs/hutchison2024}\\
+		\footnotesize Hutchison et al. 2024. Theoretical Ecology
 	\end{center}
 
 \end{frame}
 
-%------------------------------
+%------------------------------	
 
-\begin{frame}{Jacobian matrices in space}
-
-	\begin{columns}
-		\begin{column}{0.4\textwidth}			
-			What's happening with spatialization?
-			\begin{itemize}
-				\item The number of equations increases
-				\item Connectance decreases
-				\item We don't know what's happening with $\alpha$
-			\end{itemize}
-		\end{column}
-		%----
-		\begin{column}{0.7\textwidth}
-			\begin{center}
-				\includegraphics[height=0.6\textheight]{Figs/gravel2016a}\\
-				\footnotesize Gravel et al. 2016. Nat. Communications
-			\end{center}
-		\end{column}
-	\end{columns}	 
-
-\end{frame}
-
-%------------------------------
-
-\begin{frame}{Jacobian matrices in space}
-
-	\begin{columns}
-		\begin{column}{0.4\textwidth}			
-			Two problems:
-				\begin{enumerate}
-					\item Stability of the equilibrium
-					\item Feasability of the equilibrium
-				\end{enumerate}
-		\end{column}
-		%----
-		\begin{column}{0.7\textwidth}
-			\begin{center}
-				\includegraphics[height=0.6\textheight]{Figs/gravel2016a}\\
-				\footnotesize Gravel et al. 2016. Nat. Communications		
-			\end{center}
-		\end{column}
-	\end{columns}	 
-
-\end{frame}
-
-%------------------------------
-
-\begin{frame}{Analytical results}
-
+\begin{frame}{State-dependent switches}
 	\begin{center}
-		\includegraphics[height=0.45\textheight]{Figs/gravel2016b.png}\\
-		\footnotesize Gravel et al. 2016. Nat. Communications						
+		\includegraphics[height=0.6\textheight]{Figs/bergeron2026a}\\
+		\footnotesize{Bergeron et al. 2026. Am. Nat}
 	\end{center}
+\end{frame}
 
-	Spatial structure and diffusion
+%------------------------------
+
+\begin{frame}{Stability revisited}
+	\begin{center}
+		\includegraphics[height=0.6\textheight]{Figs/bergeron2026b}\\
+		\footnotesize{Bergeron et al. 2026. Am. Nat}
+	\end{center}
+\end{frame}
+
+%------------------------------
+
+\begin{frame}{Application to lemming cycles}
+	\begin{center}
+		\includegraphics[height=0.75\textheight]{Figs/bergeron2026c}\\
+		\footnotesize{Bergeron et al. 2026. Am. Nat}
+	\end{center}
+\end{frame}
+
+%------------------------------																														
+
+\begin{frame}{Open questions}
 	\begin{itemize}
-		\item Move the center of the disk toward the left 
-		\item Reduce the radius of the disk 
+		\item What are appropriate metrics to describe and understand such networks ?
+		\item How disturbances are spreading on such high dimensional networks ?
+		\item How to track indirect interactions ?
 	\end{itemize}
 \end{frame}
 
-%------------------------------
-
-\begin{frame}{And the feasibility problem}{Diffusion and environment}
-
-	\begin{columns}
-		\begin{column}{0.3\textwidth}			
-			\begin{itemize}
-				\item Indirect density-dependence
-				\item Source-sink dynamics
-				\item Feasibility
-			\end{itemize}
-		\end{column}
-		%----
-		\begin{column}{0.7\textwidth}
-			\begin{center}
-				\includegraphics[height=0.6\textheight]{Figs/gravel2016c}\\
-				\footnotesize Gravel et al. 2016. Nat. Communications		
-			\end{center}
-		\end{column}
-	\end{columns}	 
-
-\end{frame}
-
-%------------------------------
-% CONCLUSION
-%------------------------------
-
-{
-\usebackgroundtemplate{}
-\begin{frame}
-
-	\pagecolor{BDQC1st}
-	\color{white}
-
-	\LARGE{\textit{Conclusion}}
-
-\end{frame}
-}
-
-%------------------------------
-
-\begin{frame}{Stability and complexity}{Spatial dynamics}
-
-	\begin{columns}
-		\begin{column}{0.5\textwidth}			
-			\begin{itemize}
-				\item Food webs are not random
-				\item Spatial structure influence stability
-				\item Distinct spatial rates leads to funky dynamics
-				\item What's the value of this theory to the field ... 
-			\end{itemize}
-		\end{column}
-	%----
-		\begin{column}{0.5\textwidth}
-			\begin{center}
-				\includegraphics[height=0.65\textheight]{Figs/May_book}
-			\end{center}
-		\end{column}
-	\end{columns}	    
-
-\end{frame}
 %------------------------------
 %------------------------------
 %------------------------------
