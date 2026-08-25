@@ -252,11 +252,11 @@
 
     We can reformulate the equation as a change in density at location $x$ : 
 
-    \keyeq{\Delta N_x = N_{x, t+1}-N_{x, t} = d[(N_{x-1, t}-N_{x, t}) + N_{x+1, t}-N_{x, t})]}
+    \keyeq{\Delta N_{x,t}= N_{x, t+1}-N_{x, t} = d[(N_{x-1, t}-N_{x, t}) + (N_{x+1, t}-N_{x, t})]}
     
     As the time and spatial steps get smaller, the formula becomes : 
     
-    \keyeq{\frac{dN(x.t)}{dt} = D \frac{\partial^2N(x,t)}{\partial^2 x}}
+    \keyeq{\frac{dN(x,t)}{dt} = D \frac{\partial^2N(x,t)}{\partial^2 x}}
     
     Where : 
     \begin{itemize}
@@ -371,13 +371,13 @@
 
     The probability density function describing movement from location $x$ to $x'$ : 
 
-    \keyeq{k(x,x',\tau,t) = \frac{1}{\rho}(\rho)K_{\tau}(\phi,\hat{\phi})}
+    \keyeq{k(x,x',\tau,t) = \frac{1}{\rho}(\rho)K_{\tau}(\phi,\widehat{\phi})}
     
     where 
     \begin{itemize}
         \item $\rho$ is the distance between locations
         \item $\phi$ is the angle between starting point and finishing point
-        \item $\hat{\phi}$ is the direction of the home range center from the current position
+        \item $\widehat{\phi}$ is the direction of the home range center from the current position
     \end{itemize}
     
 \end{frame}
