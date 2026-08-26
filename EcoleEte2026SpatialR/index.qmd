@@ -1,0 +1,617 @@
+---
+title: "Manipulation d'objets spatiaux en R"
+subtitle: "`sf`, `terra`, projections, opérations spatiales et cartographie"
+author: "François Rousseu"
+date: "2026-08-27"
+lang: fr
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    toc-location: left
+    toc-title: "Sommaire"
+    number-sections: false
+    code-tools: true
+    code-copy: true
+    theme: cosmo
+    fig-width: 6
+    fig-height: 4
+    embed-resources: true
+  revealjs:
+    theme: simple
+    slide-level: 2
+    slide-number: true
+    scrollable: true
+    smaller: true
+    incremental: false
+    code-line-numbers: false
+    code-overflow: wrap
+    fig-width: 9
+    fig-height: 6
+    out-width: "80%"
+    progress: true
+    history: true
+    embed-resources: false
+execute:
+  echo: true
+  warning: false
+  message: false
+  cache: true
+knitr:
+  opts_chunk:
+    comment: "##"
+    collapse: false
+    out.width: "80%"
+    fig.align: "center"
+---
+
+# Introduction
+
+## Deux formats, un seul fichier
+
+Ce document se compile de deux façons :
+
+- **Site web** (document défilant avec sommaire) :
+  `quarto render index.qmd --to html`
+- **Diapos** (chaque titre `##` devient une diapo) :
+  `quarto render index.qmd --to revealjs`
+
+`quarto render index.qmd` produit les deux.
+
+En mode diapos, les blocs de code longs sont défilables (`scrollable: true`).
+
+## Prérequis
+
+Certains exemples téléchargent des données (limites administratives via `geodata`, occurrences via `rgbif`). Un seul jeu de données local est utilisé — un _shapefile_ de routes — disponible ici :
+[https://object-arbutus.cloud.computecanada.ca/bq-io/EcoleEte2026SpatialR](https://object-arbutus.cloud.computecanada.ca/bq-io/EcoleEte2026SpatialR). 
+
+Le jeu de données original [https://www.donneesquebec.ca/recherche/dataset/reseau-routier-rtss](https://www.donneesquebec.ca/recherche/dataset/reseau-routier-rtss) est modifié dans le script pour produire le fichier `routes.gpkg`.
+
+```{r prereqs, eval=FALSE}
+c("sf", "terra",           # vecteur + raster
+  "geodata", "rgbif",      # données à télécharger (frontières, occurrences)
+  "rmapshaper",            # simplification de polygones
+  "mapview", "leaflet",    # cartes interactives
+  "ggplot2", "tidyterra",  # cartographie
+  "dplyr"                  # manipulation
+) |> lapply(library, character.only = TRUE) |> invisible()
+```
+
+Les fichiers sont déposés et produits dans le dossier data et le chemin doit être indiqué avec la variable `datadir`.
+```{r datadir}
+datadir <- "data"
+```
+
+
+## Objectif de la présentation
+
+Introduction à la manipulation des **objets spatiaux** en R: lire, construire, projeter, transformer, interroger et cartographier des données **vectorielles** et **matricielles**.
+
+Les deux paquets essentiels :
+
+- [`sf`](https://r-spatial.github.io/sf) — vecteurs : points, lignes, polygones, _shapefiles_, (`.shp`), _geopackages_ (`.gpkg`)
+- [`terra`](https://rspatial.github.io/terra/) — données matricielles (_rasters_) (grilles régulières de pixels)
+
+À noter que vous verrez parfois des références aux anciens paquets `sp`, `rgdal`, `rgeos` et `raster`. Ces derniers ont été entièrement remplacés par `sf` et `terra`.
+
+
+## Vecteur ou raster ?
+
+Deux grandes familles de données spatiales :
+
+- **Vectorielles** — des géométries discrètes (points, lignes, polygones) avec des attributs. *Exemples : occurrences d'espèces, routes, limites administratives.* → `sf`
+
+- **Matricielles (_raster_)** — une grille régulière de pixels, chaque pixel portant une valeur. *Exemples : élévation, température, couvert forestier.* → `terra`
+
+
+# Données vectorielles (`sf`)
+
+## Lire un fichier vectoriel
+
+La lecture se fait avec `st_read()`, qui reconnaît le format d'après l'extension (`.shp`, `.gpkg`, etc.).
+
+```{r routes, eval = TRUE, include = FALSE}
+library(sf)
+library(dplyr)
+
+#roads <- st_read(file.path(datadir, "carreteras.shp"))
+
+roads <- st_read(file.path(datadir, "ReseauRoutier_RTSS.gpkg")) |>
+  st_transform(6624) |>
+  filter(des_clasf_ %in% c("Autoroute", "Nationale", "Régionale")) |> 
+  group_by(num_route, des_clasf_, cod_clasf_) |>
+  summarise() |>
+  st_cast("MULTILINESTRING") |>
+  st_line_merge() |>
+  st_simplify(dTolerance = 1000, preserveTopology = FALSE) |>
+  st_cast("MULTILINESTRING") |>
+  st_transform(4326) |>
+  st_write("data/routes.gpkg", append =FALSE)
+
+
+```
+
+```{r read-vect}
+library(sf)
+
+roads <- st_read(file.path(datadir, "routes.gpkg"))
+```
+
+
+## Qu'est-ce qu'un objet `sf` ?
+
+Un objet `sf` est essentiellement un `data.frame` auquel on a ajouté une **colonne de géométrie**.
+
+```{r sf-class}
+class(roads)
+head(roads)
+```
+
+## Presque un simple `data.frame`
+
+Sans la géométrie, ce sont des attributs ordinaires.
+
+```{r sf-df}
+head(as.data.frame(roads)[, 1:3])
+```
+
+On peut donc filtrer, trier et joindre un objet `sf` comme n'importe quel `data.frame`, la géométrie suivant automatiquement.
+
+## Visualiser la géométrie
+
+`plot()` possède une méthode pour les objets `sf` et `st_geometry()` extrait la géométrie (sans les attributs) — essentiel pour vérifier que nos objets spatiaux correspondent à ce qui est attendu.
+
+```{r plot-geom, fig.width=8, fig.height=6}
+plot(st_geometry(roads), axes = TRUE)
+```
+
+## Visualiser un attribut
+
+On peut également utiliser une colonne particulière pour visualiser les attributs:
+
+```{r plot-attr, fig.width=12, fig.height=6}
+plot(roads["des_clasf_"], axes = TRUE)
+```
+
+## Construire un objet `sf` à partir d'un `data.frame`
+
+`st_as_sf()` transforme un `data.frame` en objet spatial.
+
+```{r reseau, eval = FALSE, include = FALSE}
+reseau <- st_read("data/coleo_sites.gpkg")
+reseau$lon <- st_coordinates(reseau)[, 1]
+reseau$lat <- st_coordinates(reseau)[, 2]
+write.csv(st_drop_geometry(reseau), "data/reseau.csv", row.names = FALSE)
+reseau <- read.csv("data/reseau.csv")
+```
+
+```{r build-sf}
+reseau <- read.csv("data/reseau.csv")
+reseau <- st_as_sf(reseau, coords = c("lon", "lat"), crs = 4326)
+head(reseau, 3)
+```
+
+Le code `4326` identifie le système géographique WGS84 (lon/lat). Nous y reviendrons.
+
+## Écrire des données
+
+```{r write-vect, eval=FALSE}
+st_write(roads, "roads.shp",  append = FALSE)
+st_write(roads, "roads.gpkg", append = FALSE) # append = FALSE écrase un fichier déjà existant
+```
+
+Le **geopackage** (`.gpkg`) remplace de plus en plus le shapefile (`.shp`) : un seul fichier, pas de limite de longueur des noms de colonnes, possibilité d'emmagasiner plusieurs jeux de données et plusieurs types de géométries, requête SQL, etc.
+
+## Carte interactive
+
+Le paquet [`mapview`](https://r-spatial.github.io/mapview/) produit une carte navigable, et on superpose des couches avec `+`.
+
+```{r mapview, out.width="100%", out.height=420}
+library(mapview)
+mapview(roads) + mapview(reseau)
+```
+
+# Systèmes de coordonnées (projections)
+
+## Qu'est-ce qu'un CRS ?
+
+**Système de référence de coordonnées** (CRS, _Coordinate Reference System_): permet de relier des coordonnées à un endroit sur la surface du globe
+
+- **Géographique** — coordonnées sur une sphère/ellipsoïde, en degrés (lon/lat). *Ex. : WGS84 = EPSG:4326.*
+- **Projeté** — coordonnées sur un plan 2D, en mètres. *Ex. : Québec Lambert = EPSG:32198.*
+
+On fait généralement les opérations spatiales en coordonnées projetées.
+
+## Codes EPSG utiles
+
+Chaque CRS porte un code **EPSG** ; voir [https://epsg.io/](https://epsg.io/).
+
+
+| EPSG | Système | Type |
+|------|---------|-------|
+| **4326** | WGS84 — lon/lat | géographique |
+| **32198** | NAD83 / Québec Lambert | projeté |
+| **26918** | NAD83 / UTM zone 18N | projeté |
+| **6622** | NAD83(CSRS)v2 / Québec Lambert | projeté |
+| **3979** | NAD83(CSRS) / Canada Atlas Lambert | projeté |
+
+
+Les système de coordonnées projetées sont généralement adapter à un endroit particulier sur le globe et au-delà de leur zone d'application, ils peuvent introduire des déformations importantes.
+
+## Consulter et assigner un CRS
+
+En général, lorsqu'on crée un jeu de donnes spatial à partir d'un `data.frame`, on doit assigner un CRS.
+
+```{r crs-assign, eval = FALSE}
+reseau <- st_as_sf(reseau, coords = c("lon", "lat"), crs = 4326)
+```
+
+`st_crs()` lit ou **assigne** un CRS. Assigner ne *transforme pas* les coordonnées : cela ne fait qu'assigner un CRS.
+
+```{r crs-read}
+st_crs(reseau)$epsg          # code EPSG courant
+st_is_longlat(reseau)        # est-on en en coordonées géographiques (lon/lat) ou projetées?
+```
+
+
+## Transformer un CRS
+
+`st_transform()` **reprojette** les coordonnées vers un nouveau CRS.
+
+```{r crs-transform}
+st_bbox(reseau)                            # étendue en degrés
+reseau_proj <- st_transform(reseau, 32198) # vers Québec Lambert
+st_bbox(reseau_proj)                       # étendue en mètres
+```
+
+`st_bbox`: Pour obtenir l'étendue un jeu de données (_bounding box_)
+
+## Exemple — occurrences GBIF (Trille rouge)
+
+Récupérons des occurrences du Trille rouge (*Trillium erectum*) au Québec avec [`rgbif`](https://docs.ropensci.org/rgbif/).
+
+```{r gbif, out.width="60%"}
+library(rgbif)
+
+occ <- occ_search(
+  scientificName = "Trillium erectum",
+  hasCoordinate = TRUE, country = "CA",
+  stateProvince = "Québec", limit = 300
+)
+
+trille <- st_as_sf(occ$data,
+  coords = c("decimalLongitude", "decimalLatitude"), crs = 4326)
+
+plot(st_geometry(trille), pch = 16, cex = 0.5, axes = TRUE)
+```
+
+## Superposer plusieurs couches : même CRS !
+
+Pour illustrer ou combiner plusieurs objets, ils doivent partager le même CRS. Récupérons les frontières du Québec avec [`geodata`](https://github.com/rspatial/geodata), simplifiées avec `rmapshaper::ms_simplify()`.
+
+```{r canada, out.width="70%"}
+library(geodata)
+library(rmapshaper)
+
+quebec <- gadm(country = "CAN", level = 1, path = tempdir()) |>
+  st_as_sf() |>                     # on convertit en objet sf
+  filter(NAME_1 == "Québec") |>     # on garde le Québec
+  ms_simplify(keep = 0.01)          # conserve 1 % des sommets, topologie préservée
+
+
+# on ramène le Canada dans le CRS des occurrences avant de superposer
+plot(st_geometry(st_transform(quebec, st_crs(trille))), axes = TRUE)
+plot(st_geometry(trille), pch = 16, cex = 0.4, col = "forestgreen", add = TRUE)
+```
+
+
+# Opérations spatiales
+
+## Préparer les données
+
+La plupart des opérations spatiales nécessitent un CRS **projeté**.
+
+```{r ops-prep}
+trille <- st_transform(trille, 32198)
+quebec <- st_transform(quebec, 32198)
+st_is_longlat(trille)
+```
+
+## Intersection — quels points tombent dans un polygone ?
+
+Définissons une **zone d'étude** (un rectangle) et conservons les occurrences qui s'y trouvent.
+
+```{r intersect, out.width="65%"}
+#| code-fold: true
+
+zone <- st_bbox(c(xmin = -77, xmax = -74, ymin = 45.3, ymax = 46.5), crs = 4326) |>
+  st_as_sfc() |>
+  st_transform(32198)
+
+dedans <- lengths(st_intersects(trille, zone)) > 0
+
+plot(st_geometry(zone), axes = TRUE, border = "grey40")
+plot(st_geometry(trille[!dedans, ]), pch = 16, col = "blue", add = TRUE)
+plot(st_geometry(trille[ dedans, ]), pch = 16, col = "red",  add = TRUE)
+```
+
+## Version compacte
+
+Indexer un objet `sf` par un autre ne conserve que les géométries qui l'intersectent — plus concis que `st_intersects()`.
+
+```{r intersect-compact}
+trille_zone <- trille[zone, ]
+nrow(trille_zone)
+```
+
+## Opérations sur des points
+
+Quelques transformations courantes (valables aussi sur lignes et polygones).
+
+```{r point-ops, fig.width=9, fig.height=5, out.width="95%"}
+#| code-fold: true
+
+x <- trille_zone
+par(mfrow = c(2, 3), mar = c(0, 2, 1.5, 2))
+
+centro <- st_union(x) |> st_centroid()
+plot(st_geometry(x), main = "st_centroid(x)"); plot(centro, col = "red", pch = 16, cex = 2, add = TRUE)
+
+conv <- st_union(x) |> st_convex_hull()
+plot(st_geometry(x), main = "st_convex_hull(x)"); plot(conv, border = "red", add = TRUE)
+
+conc <- st_union(x) |> st_concave_hull(ratio = 0.25)
+plot(st_geometry(x), main = "st_concave_hull(x)"); plot(conc, border = "red", add = TRUE)
+
+buf1 <- st_buffer(x, dist = 10000)
+plot(st_geometry(x), main = "st_buffer(x) (chaque point)"); plot(st_geometry(buf1), border = "red", add = TRUE)
+
+bufA <- st_union(x) |> st_buffer(dist = 10000)
+plot(st_geometry(x), main = "st_buffer(x) (union)"); plot(bufA, border = "red", add = TRUE)
+
+plot(st_geometry(x), main = "st_as_sfc(st_bbox(x))"); plot(st_geometry(st_as_sfc(st_bbox(x))), border = "red", add = TRUE)
+```
+
+## Le rôle de `st_union()`
+
+`st_union()` permet de **fusionner** les géométries.
+
+```{r union}
+length(st_geometry(x))              # plusieurs points
+length(st_geometry(st_union(x)))    # un seul MULTIPOINT
+```
+
+## Opérations entre polygones
+
+Construisons deux zones tampons, puis appliquons qq opérations standards.
+
+```{r poly-ops, fig.width=7, fig.height=6, out.width="85%"}
+#| code-fold: true
+
+a <- st_buffer(x[10, ], dist = 50000)
+b <- st_buffer(x[25, ], dist = 50000)
+
+op <- c("st_intersection", "st_difference", "st_sym_difference", "st_union")
+lims <- st_bbox(st_union(a, b))
+par(mfrow = c(2, 2), mar = c(0, 0, 2, 0))
+
+for (f in op) {
+  plot(st_geometry(a), main = f, xlim = lims[c(1, 3)], ylim = lims[c(2, 4)])
+  plot(st_geometry(b), add = TRUE)
+  plot(st_geometry(get(f)(a, b)), col = "forestgreen", add = TRUE)
+}
+```
+
+## Mesurer distances et surfaces
+
+En CRS projeté, les résultats sont généralement en mètres (et m²).
+
+```{r measure}
+d <- st_distance(x[1:5, ], st_union(x) |> st_centroid())
+round(as.numeric(d) / 1000, 1)            # distances au centroïde, en km
+
+st_area(a) |> as.numeric() |> (\(v) round(v / 1e6, 1))()  # surface en km²
+```
+
+## Exemple — longueur de routes pour chaque zone tampon
+
+On enchaîne plusieurs opérations : choisir des points aléatoires, transormer en zones tampons, puis mesurer la longueur de routes dans chacun.
+
+```{r roads-buffers, fig.width=12, fig.height=8, out.width="100%"}
+#| code-fold: true
+
+set.seed(12345)
+
+roads <- st_transform(roads, 32198)
+
+n <- 10
+
+buffers <- st_union(roads) |> 
+  st_convex_hull() |>
+  st_sample(n) |> 
+  st_buffer(dist = 100000)
+
+sections <- st_intersection(buffers, roads)   # portions de routes dans les tampons
+liens <- st_intersects(buffers, sections)
+
+
+par(mar=c(0, 0, 0, 0))
+plot(buffers, border = "black", col = adjustcolor("grey", 0.2))
+plot(st_geometry(roads), col = "grey70", add = TRUE)
+
+longueurs <- sapply(liens, \(i){
+  plot(st_geometry(sections[i]), col = "red", add = TRUE)
+  sum(st_length(sections[i]))
+})
+
+text(st_coordinates(st_centroid(st_sfc(buffers))),
+     labels = round(as.numeric(longueurs) / 1000, 1), cex = 2)
+```
+
+# Données matricielles (`terra`)
+
+## Qu'est-ce qu'un raster ?
+
+Une grille régulière de pixels, chacune portant une valeur. 
+
+`rast()` permet de créer un raster de toutes pièces.
+
+```{r rast-build, out.width="70%"}
+library(terra)
+
+r <- rast(nrow = 120, ncol = 120,
+          ext = ext(-80, -60, 45, 62), crs = "EPSG:4326")
+values(r) <- runif(ncell(r))
+r
+plot(r)
+```
+
+## Lire et écrire
+
+`rast()` permet de lire un raster (le format GeoTIFF `.tif` est le plus commun)
+
+`writeRaster()` permet d'écrire sur le disque 
+
+```{r rast-io, eval=FALSE}
+writeRaster(r, "rast.tif", overwrite = TRUE)
+r2 <- rast("rast.tif")
+```
+
+## Charger de vraies données — élévation du Canada
+
+`geodata::elevation_30s()` télécharge un modèle d'élévation.
+
+```{r elev, out.width="70%"}
+elev <- elevation_30s(country = "CAN", path = tempdir(), mask = TRUE)
+elev
+plot(elev)
+```
+
+## Agréger
+
+`aggregate()` réduit la résolution par un facteur donné (utile pour alléger l'affichage ou le calcul).
+
+```{r aggregate, out.width="70%"}
+ncell(elev)
+elev10 <- aggregate(elev, fact = 10, fun = "mean")
+ncell(elev10)
+```
+
+
+## Découper et masquer
+
+`crop()` restreint l'étendue d'un raster
+
+`mask()` permet de restreindre à une étendue particlière
+
+```{r crop-mask, out.width="70%"}
+elev_qc <- crop(elev, st_transform(quebec, st_crs(elev)), mask = TRUE)
+plot(elev_qc)
+plot(st_geometry(st_transform(quebec, st_crs(elev))), add = TRUE)
+```
+
+Remarquez qu'on projette au préalable le polygone du Québec dans le CRS du raster. Aussi, les objets `sf` et `terra` sont généralement interopérables.  
+
+## Extraire des valeurs sous des points
+
+`extract()` récupère la valeur du raster à l'emplacement de chaque géométrie. Le vecteur est ramené au CRS du raster (règle : on transforme le vecteur).
+
+```{r extract, out.width="60%"}
+pts_elev <- st_transform(trille_zone, crs(elev))
+vals <- extract(elev, pts_elev)
+head(vals)
+hist(vals[, 2], main = "", xlab = "Élévation (m)")
+```
+
+## Rasteriser des points
+
+`rasterize()` convertit des géométries en raster. Ici, chaque pixel compte le nombre d'occurrences qu'il contient.
+
+```{r rasterize, out.width="100%"}
+grille <- rast(resolution = 20000, ext = ext(trille), crs = crs(trille))
+compte <- rasterize(trille, grille, fun = "length", background = 0)
+compte[compte == 0] <- NA
+plot(compte)
+plot(st_geometry(st_transform(quebec, st_crs(trille))), add = TRUE)
+```
+
+## Reclasser
+
+`classify()` regroupe des valeurs continues en classes.
+
+```{r reclass, out.width="70%"}
+seuils <- cbind(c(-100, 0, 100, 200, 300, 500, 750, 1000), c(0, 100, 200, 300, 500, 750, 1000, 1500), 1:8)
+elev_cl <- classify(elev_qc, seuils)
+lvls <- data.frame(
+  value = 1:8,
+  category = paste(c(-100, 0, 100, 200, 300, 500, 750, 1000), c(0, 100, 200, 300, 500, 750, 1000, 1500), sep = " - ")
+)
+levels(elev_cl) <- lvls
+plot(elev_cl, col = rev(terrain.colors(8)))
+```
+
+## Attention — reprojeter un raster est destructeur
+
+Chaque reprojection d'un raster **rééchantillonne** les pixels : les valeurs d'origine sont recalculées et perdues.
+
+> **Règle d'or : il est préférable de transformer le CRS des vecteurs pour l'adapter au raster, jamais l'inverse.**
+
+# Cartographie
+
+## `ggplot2` + `tidyterra`
+
+Pour des belles cartes: `geom_spatraster()` et `geom_sf()` peuvent se combiner
+
+```{r ggplot, out.width="75%", fig.width=6, fig.height=5}
+library(ggplot2)
+library(tidyterra)
+
+ggplot() +
+  geom_spatraster(data = elev_qc) +
+  geom_sf(data = st_transform(trille, 4326),
+          colour = "blue", size = 0.6, alpha = 0.7) +
+  scale_fill_hypso_c(na.value = NA) +
+  coord_sf(expand = FALSE) +
+  labs(fill = "Élévation (m)") +
+  theme_light()
+```
+
+## `mapview` — exploration rapide
+
+Idéal pour inspecter interactivement pendant l'analyse
+
+```{r mapview2, out.width="100%", out.height=420}
+mapview(quebec, alpha.regions = 0.1) +
+  mapview(st_transform(trille, 4326), cex = 3, col.regions = "orange")
+```
+
+## `leaflet` — cartes interactives sur mesure
+
+Un peu plus complexe que `mapview`, mais plus de contrôle total. `leaflet` attend du lon/lat (EPSG:4326).
+
+```{r leaflet, eval=FALSE}
+library(leaflet)
+
+leaflet(st_transform(trille, 4326)) |>
+  addTiles() |>
+  addCircleMarkers(radius = 4, color = "orange", stroke = FALSE, fillOpacity = 0.7)
+```
+
+<!--
+## Récapitulatif
+
+- **`sf`** — vecteurs : `st_read` / `st_as_sf` / `st_write`, la géométrie voyage avec un `data.frame`.
+- **CRS** — *assigner* (`st_crs`, étiqueter) ≠ *transformer* (`st_transform`, recalculer) ; mesurer en CRS **projeté**.
+- **Opérations** — `st_intersects`, `st_buffer`, `st_union`, `st_distance`, `st_area`, ensemblistes entre polygones.
+- **`terra`** — rasters : `rast`, `crop`/`mask`, `aggregate`, `extract`, `rasterize` ; ne reprojetez pas un raster sans raison.
+- **Cartographie** — `ggplot2` + `tidyterra` (statique), `mapview` / `leaflet` (interactif).
+
+-->
+
+## Pour aller plus loin
+
+- [rspatial.org](https://rspatial.org)
+- [Geocomputation with R](https://r.geocompx.org/)
+- [Spatial Data Science (`sf`/`stars`)](https://r-spatial.org/book/)
+- [`tmap`](https://r-tmap.github.io/tmap/) — pour la cartographie
+- [`stars`](https://r-spatial.github.io/stars/) — cubes de données spatio-temporelles (non couvert ici).
