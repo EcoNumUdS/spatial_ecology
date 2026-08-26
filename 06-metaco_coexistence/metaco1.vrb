@@ -4,6 +4,7 @@
         # Local replacement
             n_propagules = ContMat%*%J
             survival = survival_fn(E,O,sigma)
-            p_local = survival * n_propagules/(r^2-1)
+            total = survival*n_propagules
+            p_local = survival * n_propagules/total
     \end{verbatim}
 
