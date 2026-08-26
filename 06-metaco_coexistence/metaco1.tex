@@ -253,7 +253,7 @@
     \begin{verbatim}
         # Local replacement 
             n_propagules = ContMat%*%J
-            p_local = n_propagules/(r^2-1)
+            p_local = n_propagules/sum(n_propagules)
 
         # Regional replacement 
             p_regional = 1/s
