@@ -8859,11 +8859,18 @@ François Rousseu
 <h2>Codes EPSG utiles</h2>
 <p>Chaque CRS porte un code <strong>EPSG</strong> ; voir <a href="https://epsg.io/">https://epsg.io/</a>.</p>
 <table class="caption-top table">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 24%">
+<col style="width: 18%">
+<col style="width: 40%">
+</colgroup>
 <thead>
 <tr class="header">
 <th>EPSG</th>
 <th>Système</th>
 <th>Type</th>
+<th>Représentation</th>
 </tr>
 </thead>
 <tbody>
@@ -8871,26 +8878,25 @@ François Rousseu
 <td><strong>4326</strong></td>
 <td>WGS84 — lon/lat</td>
 <td>géographique</td>
+<td></td>
 </tr>
 <tr class="even">
 <td><strong>32198</strong></td>
 <td>NAD83 / Québec Lambert</td>
 <td>projeté</td>
+<td>centre-est Québec</td>
 </tr>
 <tr class="odd">
 <td><strong>26918</strong></td>
 <td>NAD83 / UTM zone 18N</td>
 <td>projeté</td>
+<td>ouest du Québec</td>
 </tr>
 <tr class="even">
-<td><strong>6622</strong></td>
-<td>NAD83(CSRS)v2 / Québec Lambert</td>
-<td>projeté</td>
-</tr>
-<tr class="odd">
 <td><strong>3979</strong></td>
 <td>NAD83(CSRS) / Canada Atlas Lambert</td>
 <td>projeté</td>
+<td>ouest canadien</td>
 </tr>
 </tbody>
 </table>
@@ -9212,7 +9218,7 @@ François Rousseu
 <section id="découper-et-masquer" class="slide level2">
 <h2>Découper et masquer</h2>
 <p><code>crop()</code> restreint l’étendue d’un raster</p>
-<p><code>mask()</code> permet de restreindre à une étendue particlière</p>
+<p><code>mask()</code> permet de restreindre à une étendue particulière</p>
 <div class="cell" data-layout-align="center">
 <div class="code-copy-outer-scaffold"><div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href aria-hidden="true" tabindex="-1"></a>elev_qc <span class="ot">&lt;-</span> <span class="fu">crop</span>(elev, <span class="fu">st_transform</span>(quebec, <span class="fu">st_crs</span>(elev)), <span class="at">mask =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb55-2"><a href aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(elev_qc)</span>

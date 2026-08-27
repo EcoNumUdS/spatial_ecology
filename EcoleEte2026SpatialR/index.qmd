@@ -68,13 +68,16 @@ Certains exemples téléchargent des données (limites administratives via `geod
 Le jeu de données original [https://www.donneesquebec.ca/recherche/dataset/reseau-routier-rtss](https://www.donneesquebec.ca/recherche/dataset/reseau-routier-rtss) est modifié dans le script pour produire le fichier `routes.gpkg`.
 
 ```{r prereqs, eval=FALSE}
-c("sf", "terra",           # vecteur + raster
-  "geodata", "rgbif",      # données à télécharger (frontières, occurrences)
-  "rmapshaper",            # simplification de polygones
-  "mapview", "leaflet",    # cartes interactives
-  "ggplot2", "tidyterra",  # cartographie
-  "dplyr"                  # manipulation
-) |> lapply(library, character.only = TRUE) |> invisible()
+c(
+    "sf", "terra", # vecteur + raster
+    "geodata", "rgbif", # données à télécharger (frontières, occurrences)
+    "rmapshaper", # simplification de polygones
+    "mapview", "leaflet", # cartes interactives
+    "ggplot2", "tidyterra", # cartographie
+    "dplyr" # manipulation
+) |>
+    lapply(library, character.only = TRUE) |>
+    invisible()
 ```
 
 Les fichiers sont déposés et produits dans le dossier data et le chemin doit être indiqué avec la variable `datadir`.
@@ -114,21 +117,19 @@ La lecture se fait avec `st_read()`, qui reconnaît le format d'après l'extensi
 library(sf)
 library(dplyr)
 
-#roads <- st_read(file.path(datadir, "carreteras.shp"))
+# roads <- st_read(file.path(datadir, "carreteras.shp"))
 
 roads <- st_read(file.path(datadir, "ReseauRoutier_RTSS.gpkg")) |>
-  st_transform(6624) |>
-  filter(des_clasf_ %in% c("Autoroute", "Nationale", "Régionale")) |> 
-  group_by(num_route, des_clasf_, cod_clasf_) |>
-  summarise() |>
-  st_cast("MULTILINESTRING") |>
-  st_line_merge() |>
-  st_simplify(dTolerance = 1000, preserveTopology = FALSE) |>
-  st_cast("MULTILINESTRING") |>
-  st_transform(4326) |>
-  st_write("data/routes.gpkg", append =FALSE)
-
-
+    st_transform(6624) |>
+    filter(des_clasf_ %in% c("Autoroute", "Nationale", "Régionale")) |>
+    group_by(num_route, des_clasf_, cod_clasf_) |>
+    summarise() |>
+    st_cast("MULTILINESTRING") |>
+    st_line_merge() |>
+    st_simplify(dTolerance = 1000, preserveTopology = FALSE) |>
+    st_cast("MULTILINESTRING") |>
+    st_transform(4326) |>
+    st_write("data/routes.gpkg", append = FALSE)
 ```
 
 ```{r read-vect}
@@ -196,7 +197,7 @@ Le code `4326` identifie le système géographique WGS84 (lon/lat). Nous y revie
 ## Écrire des données
 
 ```{r write-vect, eval=FALSE}
-st_write(roads, "roads.shp",  append = FALSE)
+st_write(roads, "roads.shp", append = FALSE)
 st_write(roads, "roads.gpkg", append = FALSE) # append = FALSE écrase un fichier déjà existant
 ```
 
@@ -227,13 +228,12 @@ On fait généralement les opérations spatiales en coordonnées projetées.
 Chaque CRS porte un code **EPSG** ; voir [https://epsg.io/](https://epsg.io/).
 
 
-| EPSG | Système | Type |
-|------|---------|-------|
-| **4326** | WGS84 — lon/lat | géographique |
-| **32198** | NAD83 / Québec Lambert | projeté |
-| **26918** | NAD83 / UTM zone 18N | projeté |
-| **6622** | NAD83(CSRS)v2 / Québec Lambert | projeté |
-| **3979** | NAD83(CSRS) / Canada Atlas Lambert | projeté |
+| EPSG | Système | Type | Représentation |
+|------|---------|-------|---------------|
+| **4326** | WGS84 — lon/lat | géographique ||
+| **32198** | NAD83 / Québec Lambert | projeté |centre-est Québec|
+| **26918** | NAD83 / UTM zone 18N | projeté |ouest du Québec|
+| **3979** | NAD83(CSRS) / Canada Atlas Lambert | projeté |ouest canadien|
 
 
 Les système de coordonnées projetées sont généralement adapter à un endroit particulier sur le globe et au-delà de leur zone d'application, ils peuvent introduire des déformations importantes.
@@ -249,8 +249,8 @@ reseau <- st_as_sf(reseau, coords = c("lon", "lat"), crs = 4326)
 `st_crs()` lit ou **assigne** un CRS. Assigner ne *transforme pas* les coordonnées : cela ne fait qu'assigner un CRS.
 
 ```{r crs-read}
-st_crs(reseau)$epsg          # code EPSG courant
-st_is_longlat(reseau)        # est-on en en coordonées géographiques (lon/lat) ou projetées?
+st_crs(reseau)$epsg # code EPSG courant
+st_is_longlat(reseau) # est-on en en coordonées géographiques (lon/lat) ou projetées?
 ```
 
 
@@ -259,9 +259,9 @@ st_is_longlat(reseau)        # est-on en en coordonées géographiques (lon/lat)
 `st_transform()` **reprojette** les coordonnées vers un nouveau CRS.
 
 ```{r crs-transform}
-st_bbox(reseau)                            # étendue en degrés
+st_bbox(reseau) # étendue en degrés
 reseau_proj <- st_transform(reseau, 32198) # vers Québec Lambert
-st_bbox(reseau_proj)                       # étendue en mètres
+st_bbox(reseau_proj) # étendue en mètres
 ```
 
 `st_bbox`: Pour obtenir l'étendue un jeu de données (_bounding box_)
@@ -274,13 +274,14 @@ Récupérons des occurrences du Trille rouge (*Trillium erectum*) au Québec ave
 library(rgbif)
 
 occ <- occ_search(
-  scientificName = "Trillium erectum",
-  hasCoordinate = TRUE, country = "CA",
-  stateProvince = "Québec", limit = 300
+    scientificName = "Trillium erectum",
+    hasCoordinate = TRUE, country = "CA",
+    stateProvince = "Québec", limit = 300
 )
 
 trille <- st_as_sf(occ$data,
-  coords = c("decimalLongitude", "decimalLatitude"), crs = 4326)
+    coords = c("decimalLongitude", "decimalLatitude"), crs = 4326
+)
 
 plot(st_geometry(trille), pch = 16, cex = 0.5, axes = TRUE)
 ```
@@ -294,9 +295,9 @@ library(geodata)
 library(rmapshaper)
 
 quebec <- gadm(country = "CAN", level = 1, path = tempdir()) |>
-  st_as_sf() |>                     # on convertit en objet sf
-  filter(NAME_1 == "Québec") |>     # on garde le Québec
-  ms_simplify(keep = 0.01)          # conserve 1 % des sommets, topologie préservée
+    st_as_sf() |> # on convertit en objet sf
+    filter(NAME_1 == "Québec") |> # on garde le Québec
+    ms_simplify(keep = 0.01) # conserve 1 % des sommets, topologie préservée
 
 
 # on ramène le Canada dans le CRS des occurrences avant de superposer
@@ -325,14 +326,14 @@ Définissons une **zone d'étude** (un rectangle) et conservons les occurrences 
 #| code-fold: true
 
 zone <- st_bbox(c(xmin = -77, xmax = -74, ymin = 45.3, ymax = 46.5), crs = 4326) |>
-  st_as_sfc() |>
-  st_transform(32198)
+    st_as_sfc() |>
+    st_transform(32198)
 
 dedans <- lengths(st_intersects(trille, zone)) > 0
 
 plot(st_geometry(zone), axes = TRUE, border = "grey40")
 plot(st_geometry(trille[!dedans, ]), pch = 16, col = "blue", add = TRUE)
-plot(st_geometry(trille[ dedans, ]), pch = 16, col = "red",  add = TRUE)
+plot(st_geometry(trille[dedans, ]), pch = 16, col = "red", add = TRUE)
 ```
 
 ## Version compacte
@@ -355,21 +356,27 @@ x <- trille_zone
 par(mfrow = c(2, 3), mar = c(0, 2, 1.5, 2))
 
 centro <- st_union(x) |> st_centroid()
-plot(st_geometry(x), main = "st_centroid(x)"); plot(centro, col = "red", pch = 16, cex = 2, add = TRUE)
+plot(st_geometry(x), main = "st_centroid(x)")
+plot(centro, col = "red", pch = 16, cex = 2, add = TRUE)
 
 conv <- st_union(x) |> st_convex_hull()
-plot(st_geometry(x), main = "st_convex_hull(x)"); plot(conv, border = "red", add = TRUE)
+plot(st_geometry(x), main = "st_convex_hull(x)")
+plot(conv, border = "red", add = TRUE)
 
 conc <- st_union(x) |> st_concave_hull(ratio = 0.25)
-plot(st_geometry(x), main = "st_concave_hull(x)"); plot(conc, border = "red", add = TRUE)
+plot(st_geometry(x), main = "st_concave_hull(x)")
+plot(conc, border = "red", add = TRUE)
 
 buf1 <- st_buffer(x, dist = 10000)
-plot(st_geometry(x), main = "st_buffer(x) (chaque point)"); plot(st_geometry(buf1), border = "red", add = TRUE)
+plot(st_geometry(x), main = "st_buffer(x) (chaque point)")
+plot(st_geometry(buf1), border = "red", add = TRUE)
 
 bufA <- st_union(x) |> st_buffer(dist = 10000)
-plot(st_geometry(x), main = "st_buffer(x) (union)"); plot(bufA, border = "red", add = TRUE)
+plot(st_geometry(x), main = "st_buffer(x) (union)")
+plot(bufA, border = "red", add = TRUE)
 
-plot(st_geometry(x), main = "st_as_sfc(st_bbox(x))"); plot(st_geometry(st_as_sfc(st_bbox(x))), border = "red", add = TRUE)
+plot(st_geometry(x), main = "st_as_sfc(st_bbox(x))")
+plot(st_geometry(st_as_sfc(st_bbox(x))), border = "red", add = TRUE)
 ```
 
 ## Le rôle de `st_union()`
@@ -377,8 +384,8 @@ plot(st_geometry(x), main = "st_as_sfc(st_bbox(x))"); plot(st_geometry(st_as_sfc
 `st_union()` permet de **fusionner** les géométries.
 
 ```{r union}
-length(st_geometry(x))              # plusieurs points
-length(st_geometry(st_union(x)))    # un seul MULTIPOINT
+length(st_geometry(x)) # plusieurs points
+length(st_geometry(st_union(x))) # un seul MULTIPOINT
 ```
 
 ## Opérations entre polygones
@@ -396,9 +403,9 @@ lims <- st_bbox(st_union(a, b))
 par(mfrow = c(2, 2), mar = c(0, 0, 2, 0))
 
 for (f in op) {
-  plot(st_geometry(a), main = f, xlim = lims[c(1, 3)], ylim = lims[c(2, 4)])
-  plot(st_geometry(b), add = TRUE)
-  plot(st_geometry(get(f)(a, b)), col = "forestgreen", add = TRUE)
+    plot(st_geometry(a), main = f, xlim = lims[c(1, 3)], ylim = lims[c(2, 4)])
+    plot(st_geometry(b), add = TRUE)
+    plot(st_geometry(get(f)(a, b)), col = "forestgreen", add = TRUE)
 }
 ```
 
@@ -408,9 +415,11 @@ En CRS projeté, les résultats sont généralement en mètres (et m²).
 
 ```{r measure}
 d <- st_distance(x[1:5, ], st_union(x) |> st_centroid())
-round(as.numeric(d) / 1000, 1)            # distances au centroïde, en km
+round(as.numeric(d) / 1000, 1) # distances au centroïde, en km
 
-st_area(a) |> as.numeric() |> (\(v) round(v / 1e6, 1))()  # surface en km²
+st_area(a) |>
+    as.numeric() |>
+    (\(v) round(v / 1e6, 1))() # surface en km²
 ```
 
 ## Exemple — longueur de routes pour chaque zone tampon
@@ -426,26 +435,27 @@ roads <- st_transform(roads, 32198)
 
 n <- 10
 
-buffers <- st_union(roads) |> 
-  st_convex_hull() |>
-  st_sample(n) |> 
-  st_buffer(dist = 100000)
+buffers <- st_union(roads) |>
+    st_convex_hull() |>
+    st_sample(n) |>
+    st_buffer(dist = 100000)
 
-sections <- st_intersection(buffers, roads)   # portions de routes dans les tampons
+sections <- st_intersection(buffers, roads) # portions de routes dans les tampons
 liens <- st_intersects(buffers, sections)
 
 
-par(mar=c(0, 0, 0, 0))
+par(mar = c(0, 0, 0, 0))
 plot(buffers, border = "black", col = adjustcolor("grey", 0.2))
 plot(st_geometry(roads), col = "grey70", add = TRUE)
 
 longueurs <- sapply(liens, \(i){
-  plot(st_geometry(sections[i]), col = "red", add = TRUE)
-  sum(st_length(sections[i]))
+    plot(st_geometry(sections[i]), col = "red", add = TRUE)
+    sum(st_length(sections[i]))
 })
 
 text(st_coordinates(st_centroid(st_sfc(buffers))),
-     labels = round(as.numeric(longueurs) / 1000, 1), cex = 2)
+    labels = round(as.numeric(longueurs) / 1000, 1), cex = 2
+)
 ```
 
 # Données matricielles (`terra`)
@@ -459,8 +469,10 @@ Une grille régulière de pixels, chacune portant une valeur.
 ```{r rast-build, out.width="70%"}
 library(terra)
 
-r <- rast(nrow = 120, ncol = 120,
-          ext = ext(-80, -60, 45, 62), crs = "EPSG:4326")
+r <- rast(
+    nrow = 120, ncol = 120,
+    ext = ext(-80, -60, 45, 62), crs = "EPSG:4326"
+)
 values(r) <- runif(ncell(r))
 r
 plot(r)
@@ -502,7 +514,7 @@ ncell(elev10)
 
 `crop()` restreint l'étendue d'un raster
 
-`mask()` permet de restreindre à une étendue particlière
+`mask()` permet de restreindre à une étendue particulière
 
 ```{r crop-mask, out.width="70%"}
 elev_qc <- crop(elev, st_transform(quebec, st_crs(elev)), mask = TRUE)
@@ -543,8 +555,8 @@ plot(st_geometry(st_transform(quebec, st_crs(trille))), add = TRUE)
 seuils <- cbind(c(-100, 0, 100, 200, 300, 500, 750, 1000), c(0, 100, 200, 300, 500, 750, 1000, 1500), 1:8)
 elev_cl <- classify(elev_qc, seuils)
 lvls <- data.frame(
-  value = 1:8,
-  category = paste(c(-100, 0, 100, 200, 300, 500, 750, 1000), c(0, 100, 200, 300, 500, 750, 1000, 1500), sep = " - ")
+    value = 1:8,
+    category = paste(c(-100, 0, 100, 200, 300, 500, 750, 1000), c(0, 100, 200, 300, 500, 750, 1000, 1500), sep = " - ")
 )
 levels(elev_cl) <- lvls
 plot(elev_cl, col = rev(terrain.colors(8)))
@@ -567,13 +579,15 @@ library(ggplot2)
 library(tidyterra)
 
 ggplot() +
-  geom_spatraster(data = elev_qc) +
-  geom_sf(data = st_transform(trille, 4326),
-          colour = "blue", size = 0.6, alpha = 0.7) +
-  scale_fill_hypso_c(na.value = NA) +
-  coord_sf(expand = FALSE) +
-  labs(fill = "Élévation (m)") +
-  theme_light()
+    geom_spatraster(data = elev_qc) +
+    geom_sf(
+        data = st_transform(trille, 4326),
+        colour = "blue", size = 0.6, alpha = 0.7
+    ) +
+    scale_fill_hypso_c(na.value = NA) +
+    coord_sf(expand = FALSE) +
+    labs(fill = "Élévation (m)") +
+    theme_light()
 ```
 
 ## `mapview` — exploration rapide
@@ -582,7 +596,7 @@ Idéal pour inspecter interactivement pendant l'analyse
 
 ```{r mapview2, out.width="100%", out.height=420}
 mapview(quebec, alpha.regions = 0.1) +
-  mapview(st_transform(trille, 4326), cex = 3, col.regions = "orange")
+    mapview(st_transform(trille, 4326), cex = 3, col.regions = "orange")
 ```
 
 ## `leaflet` — cartes interactives sur mesure
@@ -593,8 +607,8 @@ Un peu plus complexe que `mapview`, mais plus de contrôle total. `leaflet` atte
 library(leaflet)
 
 leaflet(st_transform(trille, 4326)) |>
-  addTiles() |>
-  addCircleMarkers(radius = 4, color = "orange", stroke = FALSE, fillOpacity = 0.7)
+    addTiles() |>
+    addCircleMarkers(radius = 4, color = "orange", stroke = FALSE, fillOpacity = 0.7)
 ```
 
 <!--
